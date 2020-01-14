@@ -9,23 +9,41 @@ def main():
     total_bill = 0
     taxis = [Taxi("Prius", 100), SilverServiceTaxi("Limo", 100, 2), SilverServiceTaxi("Hummer", 200, 4)]
     print("Let's Drive")
-    print("q)uit, c)hoose taxi, d)rive")
     menu_input = ""
-    """"Menu Loop until q is inputted"""
+    """Menu Loop until q is inputted"""
     while menu_input != "q":
+        print("q)uit, c)hoose taxi, d)rive")
         menu_input = input(">>> ").lower()
         if menu_input == "c":
             """Choose taxi"""
             print("Taxis available: ")
-            display_taxis(taxis)
-            taxi_input = int(input("Choose Taxi: "))
-            selected_taxi = taxis[taxi_input]
+            try:
+                """Check if taxis variable exist"""
+                display_taxis(taxis)
+            except NameError:
+                print("There are no taxis available.")
+            else:
+                taxi_input = int(input("Choose Taxi: "))
+                selected_taxi = taxis[taxi_input]
         elif menu_input == "d":
             """Drive taxi"""
-            selected_taxi.start_fare()
-            drive_distance = int(input("Drive how far? "))
+            try:
+                """Check if user choose a taxi"""
+                selected_taxi.start_fare()
+            except UnboundLocalError:
+                print("Taxi not selected. Please select a taxi first.")
+            else:
+                drive_distance = int(input("Drive how far? "))
+                selected_taxi.drive(drive_distance)
+                trip_fare = selected_taxi.get_fare()
+                print("Your {} trip cost you ${:.2f}".format(selected_taxi.name, trip_fare))
+                total_bill += trip_fare
         else:
             print("Invalid Option")
+        print("Bill to date: ${:.2f}".format(total_bill))
+    print("Total trip cost: ${:.2f}".format(total_bill))
+    print("Taxis are now:")
+    display_taxis(taxis)
 
 
 def display_taxis(taxis):
